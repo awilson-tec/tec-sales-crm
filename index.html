@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TEC Sales CRM</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:14px;}
+.topnav{background:#fff;border-bottom:1px solid #e5e5e2;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
+.topnav-left{display:flex;align-items:center;gap:12px;}
+.app-title{font-size:16px;font-weight:600;color:#1a1a1a;}
+.tabs{display:flex;gap:0;margin-left:20px;}
+.tab{padding:0 16px;height:52px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#888;cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;transition:color 0.15s;font-family:inherit;}
+.tab:hover{color:#1a1a1a;}
+.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;}
+.save-badge{font-size:11px;padding:3px 8px;border-radius:20px;background:#eaf3de;color:#27500a;font-weight:500;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;z-index:9999;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#27500a;}
+.toast.error{background:#a32d2d;}
+.save-badge.unsaved{background:#faeeda;color:#633806;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;z-index:9999;opacity:0;transform:translateY(8px);transition:all 0.25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#27500a;}
+.toast.error{background:#a32d2d;}
+.topnav-right{display:flex;gap:8px;align-items:center;}
+.main{max-width:1200px;margin:0 auto;padding:24px 20px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.stat{background:#fff;border-radius:10px;border:1px solid #e5e5e2;padding:14px 16px;}
+.stat-label{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
+.stat-val{font-size:26px;font-weight:600;color:#1a1a1a;}
+.stat-val.danger{color:#a32d2d;}
+.pipeline{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.pipe-seg{flex:1;min-width:80px;border-radius:8px;padding:8px 12px;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;}
+.pipe-seg:hover{border-color:rgba(0,0,0,0.15);}
+.pipe-seg.active{border-color:rgba(0,0,0,0.3);}
+.pipe-label{font-size:11px;font-weight:600;margin-bottom:2px;}
+.pipe-count{font-size:22px;font-weight:700;}
+.pipe-value{font-size:11px;margin-top:1px;opacity:0.8;}
+.ps-prospect{background:#e6f1fb;}.ps-prospect .pipe-label{color:#185fa5;}.ps-prospect .pipe-count{color:#0c447c;}.ps-prospect .pipe-value{color:#185fa5;}
+.ps-qualified{background:#faeeda;}.ps-qualified .pipe-label{color:#854f0b;}.ps-qualified .pipe-count{color:#633806;}.ps-qualified .pipe-value{color:#854f0b;}
+.ps-proposal{background:#eeedfe;}.ps-proposal .pipe-label{color:#534ab7;}.ps-proposal .pipe-count{color:#3c3489;}.ps-proposal .pipe-value{color:#534ab7;}
+.ps-negotiation{background:#e1f5ee;}.ps-negotiation .pipe-label{color:#0f6e56;}.ps-negotiation .pipe-count{color:#085041;}.ps-negotiation .pipe-value{color:#0f6e56;}
+.ps-won{background:#eaf3de;}.ps-won .pipe-label{color:#3b6d11;}.ps-won .pipe-count{color:#27500a;}.ps-won .pipe-value{color:#3b6d11;}
+.ps-lost{background:#fcebeb;}.ps-lost .pipe-label{color:#a32d2d;}.ps-lost .pipe-count{color:#791f1f;}.ps-lost .pipe-value{color:#a32d2d;}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.toolbar input[type=text]{flex:1;min-width:180px;padding:7px 12px;border:1px solid #e0e0dc;border-radius:7px;font-size:13px;background:#fff;color:#1a1a1a;}
+.toolbar input[type=text]:focus{outline:none;border-color:#888;}
+.toolbar select{padding:7px 10px;border:1px solid #e0e0dc;border-radius:7px;font-size:13px;background:#fff;color:#1a1a1a;}
+.card{background:#fff;border-radius:12px;border:1px solid #e5e5e2;overflow:hidden;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+thead th{background:#fafaf8;font-size:11px;font-weight:600;color:#888;padding:10px 14px;text-align:left;border-bottom:1px solid #e5e5e2;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+th:nth-child(1){width:17%;}th:nth-child(2){width:14%;}th:nth-child(3){width:13%;}th:nth-child(4){width:12%;}
+th:nth-child(5){width:11%;}th:nth-child(6){width:10%;}th:nth-child(7){width:10%;}th:nth-child(8){width:13%;}
+tbody tr{border-bottom:1px solid #f0f0ec;cursor:pointer;transition:background 0.1s;}
+tbody tr.sel-row{background:#deeaf7 !important;}
+tbody tr.sel-row:hover{background:#cfe0f2 !important;}
+.sel-mode-active tbody tr:hover{background:#f0f6fc;}
+/* Bulk action panel */
+#bulkPanel{display:none;background:#1a1a1a;color:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;align-items:center;gap:12px;flex-wrap:wrap;}
+#bulkPanel.show{display:flex;}
+#bulkPanel .bp-count{font-weight:600;font-size:13px;min-width:90px;}
+#bulkPanel .bp-btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500;}
+.bp-del{background:#c0392b;color:#fff;}
+.bp-del:hover{background:#a93226;}
+.bp-date{background:#2980b9;color:#fff;}
+.bp-date:hover{background:#2471a3;}
+.bp-stage{background:#27ae60;color:#fff;}
+.bp-stage:hover{background:#1e8449;}
+.bp-cancel{background:rgba(255,255,255,0.18);color:#fff;}
+.bp-cancel:hover{background:rgba(255,255,255,0.28);}
+/* Select button */
+#selectModeBtn.active{background:#0c447c;color:#fff;border-color:#0c447c;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:#fafaf8;}
+tbody td{font-size:13px;color:#1a1a1a;padding:10px 14px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.bs-Prospect{background:#e6f1fb;color:#0c447c;}
+.bs-Qualified{background:#faeeda;color:#633806;}
+.bs-Proposal{background:#eeedfe;color:#3c3489;}
+.bs-Negotiation{background:#e1f5ee;color:#085041;}
+.bs-Closed-won{background:#eaf3de;color:#27500a;}
+.bs-Closed-lost{background:#fcebeb;color:#791f1f;}
+.bp-High{background:#fcebeb;color:#791f1f;}
+.bp-Medium{background:#faeeda;color:#633806;}
+.bp-Low{background:#f1efe8;color:#444441;}
+.overdue-text{color:#a32d2d;font-weight:500;}
+.actions-cell{display:flex;gap:4px;align-items:center;}
+.icon-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;color:#888;font-size:14px;line-height:1;}
+.icon-btn:hover{background:#f0f0ec;color:#1a1a1a;}
+.empty-state{padding:48px;text-align:center;color:#aaa;}
+.empty-state p{margin-bottom:12px;font-size:15px;}
+btn,button{font-family:inherit;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #d0d0cc;background:#fff;color:#1a1a1a;transition:background 0.1s;}
+.btn:hover{background:#f5f5f2;}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.btn-primary:hover{background:#333;}
+.btn-danger{background:#fcebeb;color:#791f1f;border-color:#f09595;}
+.btn-danger:hover{background:#f7c1c1;}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:28px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:17px;font-weight:600;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.form-grid .full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-size:12px;font-weight:500;color:#555;}
+.form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:13px;font-family:inherit;color:#1a1a1a;background:#fff;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#888;}
+.form-group textarea{resize:vertical;min-height:70px;}
+.modal-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid #eee;}
+
+/* Detail panel */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:200;align-items:flex-start;justify-content:flex-end;}
+.detail-overlay.open{display:flex;}
+.detail-panel{background:#fff;width:380px;height:100vh;overflow-y:auto;padding:24px;border-left:1px solid #e5e5e2;}
+.detail-panel h3{font-size:16px;font-weight:600;margin-bottom:4px;}
+.detail-panel .sub{font-size:13px;color:#888;margin-bottom:20px;}
+.detail-row{margin-bottom:14px;}
+.detail-row .dl{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}
+.detail-row .dv{font-size:14px;color:#1a1a1a;}
+.detail-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.history{margin-top:20px;border-top:1px solid #eee;padding-top:16px;}
+.history h4{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;}
+.history-item{font-size:12px;color:#555;padding:6px 0;border-bottom:1px solid #f0f0ec;}
+.history-item:last-child{border-bottom:none;}
+.history-date{font-size:11px;color:#aaa;margin-bottom:1px;}
+
+.page{display:none;}.page.active{display:block;}
+.prospect-toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.prospect-toolbar input[type=text]{flex:1;min-width:180px;padding:7px 12px;border:1px solid #e0e0dc;border-radius:7px;font-size:13px;background:#fff;color:#1a1a1a;}
+.prospect-toolbar input[type=text]:focus{outline:none;border-color:#888;}
+.prospect-toolbar select{padding:7px 10px;border:1px solid #e0e0dc;border-radius:7px;font-size:13px;background:#fff;color:#1a1a1a;}
+.prospect-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.prospect-stat{background:#fff;border-radius:8px;border:1px solid #e5e5e2;padding:10px 16px;font-size:13px;color:#888;}
+.prospect-stat strong{color:#1a1a1a;font-size:16px;display:block;}
+.load-btn{padding:9px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.load-btn:hover{background:#333;}
+.load-btn:disabled{background:#ccc;cursor:not-allowed;}
+.p-table-wrap{overflow-x:auto;border:1px solid #e5e5e2;border-radius:12px;background:#fff;scrollbar-width:thin;}
+.p-table-wrap::-webkit-scrollbar{height:8px;}
+.p-table-wrap::-webkit-scrollbar-track{background:#f5f5f3;border-radius:4px;}
+.p-table-wrap::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px;}
+.p-table{border-collapse:collapse;table-layout:fixed;min-width:900px;}
+.p-table thead th{position:relative;background:#fafaf8;font-size:11px;font-weight:600;color:#888;padding:10px 14px;text-align:left;border-bottom:1px solid #e5e5e2;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;user-select:none;}
+.p-table thead th .col-resize{position:absolute;right:0;top:0;bottom:0;width:5px;cursor:col-resize;background:transparent;}
+.p-table thead th .col-resize:hover,.p-table thead th.resizing .col-resize{background:#bbb;}
+.p-table th:nth-child(1){width:220px;min-width:120px;}
+.p-table th:nth-child(2){width:110px;min-width:80px;}
+.p-table th:nth-child(3){width:130px;min-width:90px;}
+.p-table th:nth-child(4){width:200px;min-width:100px;}
+.p-table th:nth-child(5){width:120px;min-width:70px;}
+.p-table th:nth-child(6){width:60px;min-width:50px;}
+.p-table th:nth-child(7){width:70px;min-width:50px;}
+.p-table th:nth-child(8){width:130px;min-width:100px;}
+.p-table tbody tr{border-bottom:1px solid #f0f0ec;}
+.p-table tbody tr:last-child{border-bottom:none;}
+.p-table tbody tr:hover{background:#fafaf8;}
+.p-table tbody td{font-size:13px;color:#1a1a1a;padding:10px 14px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.map-link{color:#185fa5;text-decoration:none;font-size:12px;}
+.map-link:hover{text-decoration:underline;}
+.already-badge{font-size:11px;background:#eaf3de;color:#27500a;padding:2px 8px;border-radius:20px;font-weight:500;}
+.add-prospect-btn{font-size:12px;padding:4px 10px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap;}
+/* Map tab */
+#page-map{height:calc(100vh - 52px);display:none;flex-direction:row;}
+#page-map.active{display:flex;}
+#map-container{flex:1;position:relative;}
+#facility-map{width:100%;height:100%;}
+#map-sidebar{width:340px;background:#fff;border-left:1px solid #e5e5e2;display:flex;flex-direction:column;overflow:hidden;transition:width 0.2s;}
+#map-sidebar.collapsed{width:0;}
+#map-sidebar-inner{padding:20px;overflow-y:auto;flex:1;min-width:340px;}
+.map-sidebar-header{font-size:15px;font-weight:600;margin-bottom:4px;color:#1a1a1a;}
+.map-sidebar-sub{font-size:12px;color:#888;margin-bottom:16px;}
+.map-info-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+.map-info-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;min-width:54px;padding-top:1px;}
+.map-info-val{font-size:13px;color:#1a1a1a;flex:1;}
+.map-divider{border:none;border-top:1px solid #eee;margin:14px 0;}
+.map-pipeline-section{margin-top:4px;}
+.map-pipeline-title{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;}
+.map-opp-card{background:#fafaf8;border:1px solid #e5e5e2;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;}
+.map-opp-card:hover{background:#f0f0ec;}
+.map-opp-name{font-size:13px;font-weight:500;color:#1a1a1a;}
+.map-opp-meta{font-size:11px;color:#888;margin-top:2px;}
+.map-notes-area{width:100%;border:1px solid #e0e0dc;border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;margin-top:6px;}
+.map-notes-area:focus{outline:none;border-color:#888;}
+.map-save-note{margin-top:6px;padding:6px 14px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;}
+.map-save-note:hover{background:#333;}
+.map-add-opp-btn{margin-top:10px;width:100%;padding:8px;background:#fff;color:#1a1a1a;border:1px solid #1a1a1a;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.map-add-opp-btn:hover{background:#f5f5f3;}
+.map-filter-bar{position:absolute;top:12px;left:12px;z-index:1000;display:flex;gap:6px;flex-wrap:wrap;}
+.map-filter-btn{padding:6px 12px;background:#fff;border:1px solid #ccc;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.12);}
+.map-filter-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.map-count-badge{position:absolute;bottom:12px;left:12px;z-index:1000;background:rgba(255,255,255,0.92);border:1px solid #e5e5e2;border-radius:8px;padding:6px 12px;font-size:12px;color:#555;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+#map-empty-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#888;font-size:14px;background:rgba(255,255,255,0.92);padding:24px 32px;border-radius:12px;border:1px solid #e5e5e2;z-index:999;pointer-events:none;}
+.add-prospect-btn:hover{background:#333;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #ddd;border-top-color:#888;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.info-bar{background:#e6f1fb;border:1px solid #b5d4f4;border-radius:8px;padding:10px 14px;font-size:13px;color:#0c447c;margin-bottom:14px;}
+
+</style>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <span class="app-title">TEC Sales CRM</span>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('crm')" id="tab-crm">Pipeline</button>
+      <button class="tab" onclick="switchTab('prospect')" id="tab-prospect">Prospect</button>
+      <button class="tab" onclick="switchTab('map')" id="tab-map">Map</button>
+    </div>
+    <span class="save-badge" id="saveBadge">All saved</span>
+  </div>
+  <div class="topnav-right">
+    <button class="btn" onclick="document.getElementById('importInput').click()">Import CSV</button>
+    <input type="file" id="importInput" accept=".csv" style="display:none;" onchange="importCSV(event)"/>
+    <button class="btn" onclick="exportCSV()">Export CSV</button>
+    <button class="btn" id="autoBackupToggle" onclick="toggleAutoBackup()"></button>
+    <button class="btn" id="driveBackupBtn" onclick="driveBackup()" title="Save backup to Google Drive">☁ Drive Backup</button>
+    <button class="btn" id="selectModeBtn" onclick="toggleSelectMode()">☑ Select</button>
+    <button class="btn" onclick="clearAllData()" style="color:#a32d2d;">Clear data</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add opportunity</button>
+  </div>
+</nav>
+
+<div class="page active" id="page-crm">
+<div class="main">
+  <div class="stats" id="statsBar"></div>
+  <div class="pipeline" id="pipelineBar"></div>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search account, contact, product, manufacturer..." oninput="render()"/>
+    <select id="filterStage" onchange="render()">
+      <option value="">All stages</option>
+      <option value="__active__">⚡ Active Deals</option>
+      <option>Prospect</option><option>Qualified</option><option>Proposal</option>
+      <option>Negotiation</option><option>Closed won</option><option>Closed lost</option>
+    </select>
+    <select id="filterMfr" onchange="render()"><option value="">All manufacturers</option></select>
+    <select id="filterPriority" onchange="render()">
+      <option value="">All priorities</option>
+      <option>High</option><option>Medium</option><option>Low</option>
+    </select>
+    <select id="sortBy" onchange="render()">
+      <option value="date">Sort: follow-up date</option>
+      <option value="value">Sort: deal value</option>
+      <option value="account">Sort: account name</option>
+      <option value="stage">Sort: stage</option>
+    </select>
+  </div>
+  <!-- Bulk action panel -->
+  <div id="bulkPanel">
+    <span class="bp-count" id="bulkCount">0 selected</span>
+    <button class="bp-btn bp-del" onclick="bulkDelete()">🗑 Delete</button>
+    <button class="bp-btn bp-date" onclick="bulkSetDate()">📅 Close Date</button>
+    <button class="bp-btn bp-stage" onclick="bulkSetStage()">⇒ Stage</button>
+    <button class="bp-btn" style="background:#8e44ad;color:#fff;" onclick="bulkSetProduct()">✏ Product</button>
+    <button class="bp-btn" style="background:#d35400;color:#fff;" onclick="bulkSetValue()">$ Value</button>
+    <button class="bp-btn bp-cancel" onclick="exitSelectMode()">✕ Cancel</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr id="tableHead">
+          <th id="cbHeadTh" style="display:none;width:40px;"><input type="checkbox" id="selectAllCb" style="width:15px;height:15px;cursor:pointer;accent-color:#0c447c;" onchange="toggleSelectAll(this.checked)"/></th>
+          <th>Account</th><th>Contact</th><th>Manufacturer</th><th>Product</th>
+          <th>Value</th><th>Close Date</th><th>Last Activity</th><th>Stage</th><th>Priority</th><th>Follow-up / Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="page" id="page-prospect">
+<div class="main">
+  <div class="info-bar" id="prospectInfo">
+    <strong>One-time setup — 2 files needed (hospitals &amp; surgery centers):</strong><br>
+    <span style="display:inline-block;margin-top:6px;">
+      <strong>Step 1:</strong>
+      <a href="https://data.cms.gov/provider-data/api/1/datastore/query/xubh-q36u/0/download?format=csv" download="CMS_Hospitals.csv" style="color:#0c447c;font-weight:600;">Download Hospital File</a>
+      &nbsp;→ then click <button class="load-btn" style="padding:2px 10px;font-size:12px;" onclick="document.getElementById('hospUpload').click()">Load Hospital File</button>
+      <input type="file" id="hospUpload" accept=".csv" style="display:none;" onchange="loadHospitals(event)"/>
+      &nbsp;<span id="hospStatus" style="color:#2a7a2a;font-size:12px;"></span>
+    </span>
+    &nbsp;&nbsp;
+    <span style="display:inline-block;margin-top:6px;">
+      <strong>Step 2:</strong>
+      <a href="https://data.cms.gov/sites/default/files/2024-03/dd671b87-e70b-47f2-86e1-efd5c372848f/Provider_of_Services_File_HHA_ASC_Hospices_iQiES_2023_Q4.csv" download="CMS_ASC.csv" style="color:#0c447c;font-weight:600;">Download Surgery Center File</a>
+      &nbsp;→ then click <button class="load-btn" style="padding:2px 10px;font-size:12px;" onclick="document.getElementById('ascUpload').click()">Load Surgery Center File</button>
+      <input type="file" id="ascUpload" accept=".csv" style="display:none;" onchange="loadASCs(event)"/>
+      &nbsp;<span id="ascStatus" style="color:#2a7a2a;font-size:12px;"></span>
+    </span>
+    <br><small style="color:#888;margin-top:4px;display:inline-block;">Both files save permanently in your browser — only needed once.</small>
+  </div>
+  <div class="prospect-toolbar">
+    <input type="text" id="prospectSearch" placeholder="Search by name or city..." oninput="renderProspects()"/>
+    <select id="prospectState" onchange="renderProspects()">
+      <option value="">All states (MI, IN, OH)</option>
+      <option value="MI">Michigan</option>
+      <option value="IN">Indiana</option>
+      <option value="OH">Ohio</option>
+    </select>
+    <select id="prospectType" onchange="renderProspects()">
+      <option value="">All facility types</option>
+      <option value="hospital">Hospitals</option>
+      <option value="asc">Surgery Centers (ASC)</option>
+    </select>
+    <button class="load-btn" onclick="openAddFacilityModal()" style="margin-left:auto;">+ Add Facility</button>
+  </div>
+  <div id="prospectStats" style="display:none;font-size:13px;color:#888;margin-bottom:12px;"></div>
+  <div id="prospectTableWrap" class="p-table-wrap" style="display:none;">
+    <table class="p-table">
+      <thead>
+        <tr>
+          <th>Facility name<span class="col-resize"></span></th><th>Type<span class="col-resize"></span></th><th>Phone<span class="col-resize"></span></th><th>Address<span class="col-resize"></span></th><th>City<span class="col-resize"></span></th><th>St<span class="col-resize"></span></th><th>Zip<span class="col-resize"></span></th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="prospectBody"></tbody>
+    </table>
+  </div>
+  <div id="prospectLoading" style="padding:40px;text-align:center;color:#888;display:none;"><span class="spinner"></span> Loading facilities from CMS database...</div>
+  <div id="prospectEmpty" style="padding:32px;text-align:center;color:#aaa;display:none;">No facilities match your filters.</div>
+</div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modalTitle">Add opportunity</h3>
+    <div class="form-grid">
+      <div class="form-group" style="position:relative;">
+        <label>Account / hospital *</label>
+        <input id="fAccount" placeholder="e.g. Metro Health System" autocomplete="off" oninput="onAccountInput()" onblur="setTimeout(hideAccountSuggestions,180)"/>
+        <div id="accountSuggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:0 0 8px 8px;z-index:9999;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+        <div id="accountAddHint" style="display:none;font-size:11px;color:#888;margin-top:4px;">Not in prospect list — <a href="#" style="color:#0c447c;" onclick="addAccountToProspects(event)">add to prospect list</a></div>
+      </div>
+      <div class="form-group"><label>Contact name</label><input id="fContact" placeholder="e.g. Dr. Sarah Lee"/></div>
+      <div class="form-group"><label>Contact title</label><input id="fTitle" placeholder="e.g. Chief of Surgery"/></div>
+      <div class="form-group"><label>Department</label><input id="fDept" placeholder="e.g. Orthopedics, Supply Chain"/></div>
+      <div class="form-group"><label>Phone</label><input id="fPhone" placeholder="e.g. 312-555-0100"/></div>
+      <div class="form-group full"><label>Email</label><input id="fEmail" type="email" placeholder="e.g. dr.lee@metrohealth.org"/></div>
+      <div class="form-group"><label>Manufacturer</label><input id="fMfr" placeholder="e.g. Stryker, Medtronic"/></div>
+      <div class="form-group"><label>Product / line</label><input id="fProduct" placeholder="e.g. Triathlon Knee System"/></div>
+      <div class="form-group"><label>Est. value ($)</label><input id="fValue" type="number" placeholder="e.g. 45000"/></div>
+      <div class="form-group"><label>Close date (est.)</label><input id="fClose" type="date"/></div>
+      <div class="form-group"><label>Stage</label>
+        <select id="fStage">
+          <option>Prospect</option><option>Qualified</option><option>Proposal</option>
+          <option>Negotiation</option><option>Closed won</option><option>Closed lost</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Priority</label>
+        <select id="fPriority"><option>High</option><option>Medium</option><option>Low</option></select>
+      </div>
+      <div class="form-group"><label>Follow-up date</label><input id="fDate" type="date"/></div>
+      <div class="form-group"><label>Facility type</label>
+        <select id="fFacility">
+          <option value="">— select —</option>
+          <option>Hospital</option><option>ASC</option><option>Clinic / practice</option>
+          <option>IDN / health system</option><option>GPO</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group full"><label>Address</label><input id="fAddr" placeholder="e.g. 123 Main St"/></div>
+      <div class="form-group"><label>City</label><input id="fCity" placeholder="e.g. Detroit"/></div>
+      <div class="form-group"><label>State</label><input id="fState" placeholder="e.g. MI"/></div>
+      <div class="form-group"><label>Zip</label><input id="fZip" placeholder="e.g. 48201"/></div>
+      <div class="form-group full"><label>Next action / notes</label><textarea id="fNotes" placeholder="e.g. Send comparison deck, schedule OR demo, follow up after committee meeting..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="deleteBtn" onclick="deleteFromModal()" style="display:none;">Delete</button>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveOpp()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STAGES=['Prospect','Qualified','Proposal','Negotiation','Closed won','Closed lost'];
+const STAGE_ORDER={Prospect:0,Qualified:1,Proposal:2,Negotiation:3,'Closed won':4,'Closed lost':5};
+const PCLS={Prospect:'ps-prospect',Qualified:'ps-qualified',Proposal:'ps-proposal',Negotiation:'ps-negotiation','Closed won':'ps-won','Closed lost':'ps-lost'};
+
+const SAMPLE=[
+  {id:1,account:'Midwest Surgical Center',contact:'Dr. James Harmon',title:'Orthopedic Surgeon',phone:'312-555-0182',email:'j.harmon@midwestsurgical.com',mfr:'Stryker',product:'Triathlon Knee System',value:62000,close:'2026-06-30',stage:'Proposal',priority:'High',facility:'Hospital',date:'2026-05-12',notes:'Send updated pricing sheet. Decision by end of month.',history:[{date:'2026-04-28',note:'Initial meeting — strong interest in knee system.'}]},
+  {id:2,account:"St. Luke's Hospital",contact:'Maria Chen',title:'Materials Manager',phone:'614-555-0241',email:'m.chen@stlukes.org',mfr:'Medtronic',product:'Hugo RAS System',value:210000,close:'2026-08-15',stage:'Qualified',priority:'High',facility:'IDN / health system',date:'2026-05-08',notes:'Schedule OR walkthrough with clinical team.',history:[{date:'2026-04-15',note:'Discovery call completed. Budget confirmed.'}]},
+  {id:3,account:'Lakeside Spine Clinic',contact:'Dr. Paul Torres',title:'Spine Surgeon',phone:'773-555-0399',email:'ptorres@lakesidespine.com',mfr:'Zimmer Biomet',product:'Mobi-C Cervical Disc',value:38000,close:'2026-07-01',stage:'Prospect',priority:'Medium',facility:'Clinic / practice',date:'2026-05-20',notes:'Initial call done. Send clinical study data.',history:[]},
+  {id:4,account:'Regional Medical Group',contact:'Karen Owens',title:'VP Supply Chain',phone:'248-555-0115',email:'kowens@regionalmed.com',mfr:'Stryker',product:'Mako SmartRobotics',value:950000,close:'2026-06-01',stage:'Negotiation',priority:'High',facility:'IDN / health system',date:'2026-05-07',notes:'Contract redline in progress. Legal review pending.',history:[{date:'2026-04-20',note:'Proposal submitted. Value $950k.'},{date:'2026-03-10',note:'Product demo completed — very positive response.'}]},
+  {id:5,account:'Alliance Orthopedics',contact:'Dr. Nina Patel',title:'Joint Replacement Specialist',phone:'419-555-0077',email:'npatel@allianceortho.com',mfr:'DePuy Synthes',product:'ATTUNE Knee',value:55000,close:'2026-04-30',stage:'Closed won',priority:'Medium',facility:'ASC',date:'2026-04-30',notes:'PO received. Schedule onboarding and rep training.',history:[{date:'2026-04-29',note:'Closed won. PO #44812 received.'}]},
+];
+
+let opps=[];
+let nextId=1;
+let editId=null;
+let unsaved=false;
+
+function load(){
+  try{
+    const raw=localStorage.getItem('mdcrm_opps');
+    if(raw){opps=JSON.parse(raw);nextId=Math.max(...opps.map(o=>o.id),0)+1;}
+    else{opps=JSON.parse(JSON.stringify(SAMPLE));nextId=6;save(true);}
+  }catch(e){opps=JSON.parse(JSON.stringify(SAMPLE));nextId=6;}
+}
+
+function save(silent){
+  try{
+    localStorage.setItem('mdcrm_opps',JSON.stringify(opps));
+    localStorage.setItem('mdcrm_saved',new Date().toISOString());
+    unsaved=false;
+    if(!silent){
+      const b=document.getElementById('saveBadge');
+      b.textContent='Saved just now';b.className='save-badge';
+    }
+  }catch(e){console.error('Save failed',e);}
+}
+
+function markUnsaved(){
+  unsaved=true;
+  const b=document.getElementById('saveBadge');
+  b.textContent='Unsaved changes';b.className='save-badge unsaved';
+}
+
+function badgeStage(s){return'badge bs-'+s.replace(' ','-');}
+function badgePri(p){return'badge bp-'+p;}
+
+function updateMfrFilter(){
+  const sel=document.getElementById('filterMfr');
+  const cur=sel.value;
+  const mfrs=[...new Set(opps.map(o=>o.mfr).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">All manufacturers</option>'+mfrs.map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
+}
+
+function renderStats(){
+  const active=opps.filter(o=>o.stage!=='Closed won'&&o.stage!=='Closed lost');
+  const won=opps.filter(o=>o.stage==='Closed won');
+  const pipe=active.reduce((s,o)=>s+(+o.value||0),0);
+  const wonVal=won.reduce((s,o)=>s+(+o.value||0),0);
+  const today=new Date().toISOString().slice(0,10);
+  const overdue=active.filter(o=>o.date&&o.date<today).length;
+  document.getElementById('statsBar').innerHTML=`
+    <div class="stat"><div class="stat-label">Active deals</div><div class="stat-val">${active.length}</div></div>
+    <div class="stat"><div class="stat-label">Pipeline value</div><div class="stat-val">$${pipe>=1000000?(pipe/1000000).toFixed(1)+'M':(Math.round(pipe/1000))+'k'}</div></div>
+    <div class="stat"><div class="stat-label">Closed won</div><div class="stat-val">$${wonVal>=1000000?(wonVal/1000000).toFixed(1)+'M':(Math.round(wonVal/1000))+'k'}</div></div>
+    <div class="stat"><div class="stat-label">Overdue follow-ups</div><div class="stat-val ${overdue>0?'danger':''}">${overdue}</div></div>
+    <div class="stat"><div class="stat-label">Manufacturers</div><div class="stat-val">${new Set(opps.map(o=>o.mfr).filter(Boolean)).size}</div></div>`;
+}
+
+function renderPipeline(){
+  const counts={};const vals={};
+  STAGES.forEach(s=>{counts[s]=0;vals[s]=0;});
+  opps.forEach(o=>{counts[o.stage]=(counts[o.stage]||0)+1;vals[o.stage]=(vals[o.stage]||0)+(+o.value||0);});
+  const activeStage=document.getElementById('filterStage').value;
+  document.getElementById('pipelineBar').innerHTML=STAGES.map(s=>`
+    <div class="pipe-seg ${PCLS[s]}${activeStage===s?' active':''}" onclick="toggleStageFilter('${s}')">
+      <div class="pipe-label">${s}</div>
+      <div class="pipe-count">${counts[s]}</div>
+      <div class="pipe-value">${vals[s]?'$'+Math.round(vals[s]/1000)+'k':''}</div>
+    </div>`).join('');
+}
+
+function toggleStageFilter(s){
+  const sel=document.getElementById('filterStage');
+  sel.value=sel.value===s?'':s;render();
+}
+
+function render(){
+  updateMfrFilter();renderStats();renderPipeline();
+  const search=document.getElementById('search').value.toLowerCase();
+  const stage=document.getElementById('filterStage').value;
+  const mfr=document.getElementById('filterMfr').value;
+  const pri=document.getElementById('filterPriority').value;
+  const sort=document.getElementById('sortBy').value;
+  const today=new Date().toISOString().slice(0,10);
+
+  const activeStages = new Set(['Prospect','Qualified','Proposal','Negotiation']);
+  let list=opps.filter(o=>{
+    if(stage==='__active__'&&!activeStages.has(o.stage))return false;
+    if(stage&&stage!=='__active__'&&o.stage!==stage)return false;
+    if(mfr&&o.mfr!==mfr)return false;
+    if(pri&&o.priority!==pri)return false;
+    if(search&&![o.account,o.contact,o.product,o.mfr,o.notes,o.title,o.facility].join(' ').toLowerCase().includes(search))return false;
+    return true;
+  });
+
+  list.sort((a,b)=>{
+    if(sort==='value')return(+b.value||0)-(+a.value||0);
+    if(sort==='account')return a.account.localeCompare(b.account);
+    if(sort==='stage')return STAGE_ORDER[a.stage]-STAGE_ORDER[b.stage];
+    const da=a.date||'9999',db=b.date||'9999';return da.localeCompare(db);
+  });
+
+  const tbody=document.getElementById('tableBody');
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><p>No opportunities match your filters.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=list.map(o=>{
+    const overdue=o.date&&o.date<today&&o.stage!=='Closed won'&&o.stage!=='Closed lost';
+    const notePreview=o.notes?(o.notes.slice(0,35)+(o.notes.length>35?'…':'')):'';
+    const sel=selectedIds.has(o.id);
+    const cbCell=selectMode?`<td style="width:40px;padding:0 0 0 14px;" onclick="event.stopPropagation()"><input type="checkbox" style="width:15px;height:15px;cursor:pointer;accent-color:#0c447c;" ${sel?'checked':''} onchange="toggleRow(${o.id},this.checked)"/></td>`:'';
+    return`<tr class="${sel?'sel-row':''}" onclick="rowClick(event,${o.id})">
+      ${cbCell}
+      <td title="${o.account}"><strong>${o.account}</strong>${o.facility?`<br><span style="font-size:11px;color:#999;">${o.facility}</span>`:''}</td>
+      <td title="${o.contact}">${o.contact||'—'}<br><span style="font-size:11px;color:#999;">${o.title||''}</span></td>
+      <td title="${o.mfr}">${o.mfr||'—'}</td>
+      <td title="${o.product}">${o.product||'—'}</td>
+      <td>${o.value?'$'+(+o.value).toLocaleString():'—'}</td>
+      <td style="font-size:12px;">${o.close||'—'}</td>
+      <td class="last-act-col">${(()=>{const h=o.history&&o.history.length?o.history[o.history.length-1]:null;if(!h)return'—';const d=h.date||'';const short=d.length===10?d.slice(5):d.slice(0,16);return`<span title="${h.note||''}">${short}</span>`;})()}</td>
+      <td><span class="${badgeStage(o.stage)}">${o.stage}</span></td>
+      <td><span class="${badgePri(o.priority)}">${o.priority}</span></td>
+      <td>
+        <span class="${overdue?'overdue-text':''}" style="font-size:12px;">${o.date||''}</span>
+        ${notePreview?`<br><span style="font-size:11px;color:#888;">${notePreview}</span>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+  const allCb=document.getElementById('selectAllCb');
+  if(allCb){allCb.checked=list.length>0&&list.every(o=>selectedIds.has(o.id));allCb.indeterminate=!allCb.checked&&list.some(o=>selectedIds.has(o.id));}
+  updateBulkPanel();
+}
+
+/* Detail panel */
+function openDetail(id){
+  const o=opps.find(x=>x.id===id);if(!o)return;
+  const today=new Date().toISOString().slice(0,10);
+  const overdue=o.date&&o.date<today&&o.stage!=='Closed won'&&o.stage!=='Closed lost';
+  const hist=(o.history||[]).slice().reverse();
+  let panel=document.getElementById('detailPanel');
+  if(!panel){
+    panel=document.createElement('div');panel.id='detailOverlay';panel.className='detail-overlay';
+    panel.innerHTML=`<div style="flex:1;height:100vh;" onclick="closeDetail()"></div><div class="detail-panel" id="detailPanel"></div>`;
+    document.body.appendChild(panel);
+  }
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+      <div>
+        <h3>${o.account}</h3>
+        <div class="sub">${o.facility||''}</div>
+      </div>
+      <button class="icon-btn" onclick="closeDetail()" style="font-size:18px;">✕</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;">
+      <span class="${badgeStage(o.stage)}">${o.stage}</span>
+      <span class="${badgePri(o.priority)}">${o.priority} priority</span>
+    </div>
+    <div class="detail-row"><div class="dl">Contact</div><div class="dv">${o.contact||'—'} ${o.title?'· '+o.title:''}</div></div>
+    <div class="detail-row"><div class="dl">Department</div><div class="dv">${o.dept||'—'}</div></div>
+    <div class="detail-row"><div class="dl">Phone</div><div class="dv">${o.phone?`<a href="tel:${o.phone}" style="color:inherit;">${o.phone}</a>`:'—'}</div></div>
+    <div class="detail-row"><div class="dl">Email</div><div class="dv">${o.email?`<a href="mailto:${o.email}" style="color:#185fa5;">${o.email}</a>`:'—'}</div></div>
+    <div class="detail-row"><div class="dl">Manufacturer</div><div class="dv">${o.mfr||'—'}</div></div>
+    <div class="detail-row"><div class="dl">Product</div><div class="dv">${o.product||'—'}</div></div>
+    <div class="detail-row"><div class="dl">Est. value</div><div class="dv">${o.value?'$'+(+o.value).toLocaleString():'—'}</div></div>
+    <div class="detail-row"><div class="dl">Est. close date</div><div class="dv">${o.close||'—'}</div></div>
+    <div class="detail-row"><div class="dl">Follow-up date</div><div class="dv ${overdue?'overdue-text':''}">${o.date||'—'}${overdue?' — OVERDUE':''}</div></div>
+    <div class="detail-row"><div class="dl">Next action</div><div class="dv">${o.notes||'—'}</div></div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="closeDetail();openEditModal(${o.id})">Edit</button>
+      <button class="btn" onclick="quickAdvance(${o.id})">Advance stage →</button>
+    </div>
+    <div class="log-activity-box">
+      <h4>Log Activity</h4>
+      <div class="activity-type-grid">
+        <button class="act-type-btn selected" onclick="selectActType(this,'📞 Call')">📞 Call</button>
+        <button class="act-type-btn" onclick="selectActType(this,'✉ Email')">✉ Email</button>
+        <button class="act-type-btn" onclick="selectActType(this,'🤝 Meeting')">🤝 Meeting</button>
+        <button class="act-type-btn" onclick="selectActType(this,'📋 Demo')">📋 Demo</button>
+        <button class="act-type-btn" onclick="selectActType(this,'📄 Proposal')">📄 Proposal</button>
+        <button class="act-type-btn" onclick="selectActType(this,'📝 Note')">📝 Note</button>
+      </div>
+      <textarea class="act-note-input" id="actNoteInput" placeholder="Add notes about this activity (optional)..."></textarea>
+      <button class="log-act-btn" onclick="logActivity(${o.id})">+ Log Activity</button>
+    </div>
+    <div class="history">
+      <h4>Activity history</h4>
+      ${hist.length ? hist.map(h => {
+        const typeMatch = h.note && h.note.match(/^(📞 Call|✉ Email|🤝 Meeting|📋 Demo|📄 Proposal|📝 Note|Stage changed)/);
+        const typeBadge = typeMatch ? '<span class="history-type">' + typeMatch[0].replace(/[📞✉🤝📋📄📝]/g,'').trim() + '</span>' : '';
+        return '<div class="history-item"><div class="history-date">' + (h.date||'') + '</div>' + typeBadge + (h.note||'') + '</div>';
+      }).join('') : '<div style="color:#aaa;font-size:12px;">No activity logged yet.</div>'}
+    </div>`;
+  document.getElementById('detailOverlay').className='detail-overlay open';
+}
+
+function closeDetail(){
+  const o=document.getElementById('detailOverlay');
+  if(o)o.className='detail-overlay';
+}
+
+function quickAdvance(id){
+  const o=opps.find(x=>x.id===id);if(!o)return;
+  const idx=STAGE_ORDER[o.stage];
+  if(idx>=4){alert('Deal is already closed.');return;}
+  const next=STAGES[idx+1];
+  if(!confirm(`Advance "${o.account}" to "${next}"?`))return;
+  if(!o.history)o.history=[];
+  o.history.push({date:new Date().toISOString().slice(0,10),note:`Stage advanced to ${next}.`});
+  o.stage=next;
+  save();render();closeDetail();
+}
+
+/* Add / Edit Modal */
+function openAddModal(){editId=null;populateModal(null);document.getElementById('modalOverlay').className='overlay open';}
+function openEditModal(id){editId=id;populateModal(opps.find(o=>o.id===id));document.getElementById('modalOverlay').className='overlay open';}
+
+function populateModal(o){
+  document.getElementById('modalTitle').textContent=o?'Edit opportunity':'Add opportunity';
+  document.getElementById('deleteBtn').style.display=o?'inline-flex':'none';
+  const fields=['Account','Contact','Title','Dept','Phone','Email','Mfr','Product','Value','Close','Stage','Priority','Date','Facility','Notes'];
+  const keys=['account','contact','title','dept','phone','email','mfr','product','value','close','stage','priority','date','facility','notes'];
+  fields.forEach((f,i)=>{const el=document.getElementById('f'+f);if(el)el.value=o?o[keys[i]]||'':''});
+  if(!o){document.getElementById('fStage').value='Prospect';document.getElementById('fPriority').value='Medium';}
+}
+
+function closeModal(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').className='overlay';}
+
+function saveOpp(){
+  const account=document.getElementById('fAccount').value.trim();
+  if(!account){alert('Account name is required.');return;}
+  const today=new Date().toISOString().slice(0,10);
+  if(editId){
+    const o=opps.find(x=>x.id===editId);
+    const oldName=o.account;
+    const newName=account;
+    const prevStage=o.stage;
+    const newStage=document.getElementById('fStage').value;
+    if(!o.history)o.history=[];
+    Object.assign(o,getFormData());
+    if(prevStage!==newStage)o.history.push({date:today,note:`Stage changed from ${prevStage} to ${newStage}.`});
+    // If account name changed, rename in prospect list
+    if(oldName && newName && oldName.toLowerCase()!==newName.toLowerCase()){
+      renameFacilityInProspects(oldName, newName, o);
+    }
+  } else {
+    const o={id:nextId++,...getFormData(),history:[{date:today,note:'Opportunity created.'}]};
+    opps.push(o);
+  }
+  save();render();document.getElementById('modalOverlay').className='overlay';
+}
+
+function renameFacilityInProspects(oldName, newName, opp) {
+  const oldLow = oldName.toLowerCase().trim();
+  let changed = false;
+  // Update in-memory list
+  allFacilities.forEach(f => {
+    if (f.name.toLowerCase().trim() === oldLow) {
+      f.name = newName;
+      // Also sync address fields if they were filled in the opp
+      if (opp.addr)   f.address = opp.addr;
+      if (opp.city)   f.city    = opp.city;
+      if (opp.ostate) f.state   = opp.ostate;
+      if (opp.zip)    f.zip     = opp.zip;
+      if (opp.phone)  f.phone   = opp.phone;
+      changed = true;
+    }
+  });
+  if (!changed) return; // not in prospect list, nothing to do
+  // Update map notes key if it existed under old name
+  try {
+    const notes = JSON.parse(localStorage.getItem(MAP_NOTES_KEY)||'{}');
+    if (notes[oldName]) { notes[newName]=notes[oldName]; delete notes[oldName]; localStorage.setItem(MAP_NOTES_KEY,JSON.stringify(notes)); }
+  } catch(e) {}
+  // Persist updated manual facilities
+  try {
+    const manual = JSON.parse(localStorage.getItem(MANUAL_KEY)||'[]');
+    let mChanged = false;
+    manual.forEach(f => { if (f.name.toLowerCase().trim()===oldLow) { f.name=newName; mChanged=true; } });
+    if (mChanged) localStorage.setItem(MANUAL_KEY, JSON.stringify(manual));
+  } catch(e) {}
+  // Persist updated hospital list
+  try {
+    const hosps = JSON.parse(localStorage.getItem(HOSP_KEY)||'[]');
+    let hChanged = false;
+    hosps.forEach(f => { if (f.name.toLowerCase().trim()===oldLow) { f.name=newName; hChanged=true; } });
+    if (hChanged) localStorage.setItem(HOSP_KEY, JSON.stringify(hosps));
+  } catch(e) {}
+  // Persist updated ASC list
+  try {
+    const ascs = JSON.parse(localStorage.getItem(ASC_KEY)||'[]');
+    let aChanged = false;
+    ascs.forEach(f => { if (f.name.toLowerCase().trim()===oldLow) { f.name=newName; aChanged=true; } });
+    if (aChanged) localStorage.setItem(ASC_KEY, JSON.stringify(ascs));
+  } catch(e) {}
+  // Reset map so pins re-render with new name
+  mapInitialized = false;
+}
+
+function getFormData(){
+  return{
+    account:document.getElementById('fAccount').value.trim()||'Unnamed',
+    contact:document.getElementById('fContact').value.trim(),
+    title:document.getElementById('fTitle').value.trim(),
+    dept:document.getElementById('fDept').value.trim(),
+    phone:document.getElementById('fPhone').value.trim(),
+    email:document.getElementById('fEmail').value.trim(),
+    mfr:document.getElementById('fMfr').value.trim(),
+    product:document.getElementById('fProduct').value.trim(),
+    value:+document.getElementById('fValue').value||0,
+    close:document.getElementById('fClose').value,
+    stage:document.getElementById('fStage').value,
+    priority:document.getElementById('fPriority').value,
+    date:document.getElementById('fDate').value,
+    facility:document.getElementById('fFacility').value,
+    addr:document.getElementById('fAddr').value.trim(),
+    city:document.getElementById('fCity').value.trim(),
+    ostate:document.getElementById('fState').value.trim(),
+    zip:document.getElementById('fZip').value.trim(),
+    notes:document.getElementById('fNotes').value.trim(),
+  };
+}
+
+function deleteFromModal(){
+  if(!editId)return;
+  const o=opps.find(x=>x.id===editId);
+  if(!confirm(`Delete "${o.account}"? This cannot be undone.`))return;
+  opps=opps.filter(x=>x.id!==editId);
+  save();render();document.getElementById('modalOverlay').className='overlay';
+}
+
+function importCSV(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const lines=e.target.result.split('\n').filter(l=>l.trim());
+      if(lines.length<2){alert('CSV appears empty.');return;}
+      const headers=lines[0].split(',').map(h=>h.replace(/"/g,'').trim().toLowerCase());
+      const map={
+        'account':0,'contact':1,'title':2,'department':3,'phone':4,'email':5,
+        'manufacturer':6,'product':7,'value':8,'close date':9,'stage':10,
+        'priority':11,'facility':12,'follow-up date':13,'notes':14
+      };
+      const idx={};
+      headers.forEach((h,i)=>{if(map[h]!==undefined)idx[h]=i;});
+      const imported=lines.slice(1).map((line,n)=>{
+        const cols=line.match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g)||[];
+        const clean=cols.map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"').trim());
+        const stage=clean[idx['stage']]||'Prospect';
+        const validStage=STAGES.includes(stage)?stage:'Prospect';
+        const pri=clean[idx['priority']]||'Medium';
+        const validPri=['High','Medium','Low'].includes(pri)?pri:'Medium';
+        return{
+          id:nextId++,
+          account:clean[idx['account']]||'Unnamed',
+          contact:clean[idx['contact']]||'',
+          title:clean[idx['title']]||'',
+          dept:clean[idx['department']]||'',
+          phone:clean[idx['phone']]||'',
+          email:clean[idx['email']]||'',
+          mfr:clean[idx['manufacturer']]||'',
+          product:clean[idx['product']]||'',
+          value:+clean[idx['value']]||0,
+          close:clean[idx['close date']]||'',
+          stage:validStage,
+          priority:validPri,
+          facility:clean[idx['facility']]||'',
+          date:clean[idx['follow-up date']]||'',
+          notes:clean[idx['notes']]||'',
+          history:[{date:new Date().toISOString().slice(0,10),note:'Imported from CSV.'}]
+        };
+      }).filter(o=>o.account&&o.account!=='Unnamed'||true);
+      const mode=opps.length>0?confirm('Do you want to REPLACE all current data with the imported file?\n\nClick OK to replace, or Cancel to merge (add imported records alongside existing ones).'):true;
+      if(mode)opps=imported;
+      else opps=[...opps,...imported];
+      save();render();
+      alert(`Successfully imported ${imported.length} opportunities.`);
+    }catch(err){alert('Import failed. Please make sure this is a CSV exported from TEC Sales CRM.\n\n'+err);}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+function exportCSV(){
+  const headers=['Account','Contact','Title','Department','Phone','Email','Manufacturer','Product','Value','Close Date','Stage','Priority','Facility','Follow-up Date','Address','City','State','Zip','Notes'];
+  const rows=opps.map(o=>[o.account,o.contact,o.title,o.dept,o.phone,o.email,o.mfr,o.product,o.value,o.close,o.stage,o.priority,o.facility,o.date,o.addr,o.city,o.ostate,o.zip,o.notes].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TEC_CRM_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+function clearAllData(){
+  if(!confirm('Clear ALL opportunities? This cannot be undone.'))return;
+  opps=[];nextId=1;save();render();
+}
+
+
+function switchTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='prospect') initProspect();
+  if(tab==='map') setTimeout(initMapTab, 50);
+}
+
+let allFacilities = [];
+let facilitiesLoaded = false;
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      result.push(cur.trim()); cur = '';
+    } else cur += ch;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+// Storage keys
+const HOSP_KEY = 'tec_hospitals';
+const ASC_KEY  = 'tec_ascs';
+
+function initProspect() {
+  try {
+    const hospData = localStorage.getItem(HOSP_KEY);
+    const ascData  = localStorage.getItem(ASC_KEY);
+    const hosps = hospData ? JSON.parse(hospData) : [];
+    const ascs  = ascData  ? JSON.parse(ascData)  : [];
+    if (hosps.length) document.getElementById('hospStatus').textContent = '✓ ' + hosps.length + ' hospitals loaded';
+    if (ascs.length)  document.getElementById('ascStatus').textContent  = '✓ ' + ascs.length  + ' surgery centers loaded';
+    allFacilities = [...hosps, ...ascs].sort((a,b) => a.name.localeCompare(b.name));
+    if (allFacilities.length) {
+      facilitiesLoaded = true;
+      // Only hide setup bar when BOTH files are loaded
+      if (hosps.length && ascs.length) {
+        document.getElementById('prospectInfo').style.display = 'none';
+      }
+      renderProspects();
+    }
+  } catch(e) {}
+}
+
+function buildFacilityList() {
+  try {
+    const hosps = JSON.parse(localStorage.getItem(HOSP_KEY) || '[]');
+    const ascs  = JSON.parse(localStorage.getItem(ASC_KEY)  || '[]');
+    allFacilities = [...hosps, ...ascs].sort((a,b) => a.name.localeCompare(b.name));
+    facilitiesLoaded = allFacilities.length > 0;
+    if (facilitiesLoaded) {
+      // Only hide setup bar when BOTH files are loaded
+      if (hosps.length && ascs.length) {
+        document.getElementById('prospectInfo').style.display = 'none';
+      }
+      renderProspects();
+    }
+  } catch(e) {}
+}
+
+function loadHospitals(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('hospStatus');
+  statusEl.textContent = 'Loading...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const lines = e.target.result.split('\n').filter(l => l.trim());
+      if (lines.length < 2) { statusEl.textContent = '⚠ File empty'; return; }
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/[^a-z0-9]/g,'_'));
+      const iName  = headers.findIndex(h => h.includes('facility_name'));
+      const iAddr  = headers.findIndex(h => h.includes('address'));
+      const iCity  = headers.findIndex(h => h.includes('city'));
+      const iState = headers.findIndex(h => h.includes('state'));
+      const iZip   = headers.findIndex(h => h.includes('zip'));
+      const iPhone = headers.findIndex(h => h.includes('telephone'));
+      const iType  = headers.findIndex(h => h.includes('hospital_type'));
+      if (iName < 0 || iState < 0) {
+        statusEl.textContent = '⚠ Wrong file — use Hospital file';
+        return;
+      }
+      const target = new Set(['MI','IN','OH']);
+      const results = [];
+      for (let i = 1; i < lines.length; i++) {
+        const c = parseCSVLine(lines[i]);
+        const state = (c[iState]||'').trim();
+        if (!target.has(state)) continue;
+        const name = (c[iName]||'').trim();
+        if (!name) continue;
+        results.push({
+          name,
+          address: (c[iAddr]||'').trim(),
+          city:    (c[iCity]||'').trim(),
+          state,
+          zip:     (c[iZip]||'').trim(),
+          phone:   (c[iPhone]||'').trim(),
+          ftype:   'hospital',
+          htype:   (c[iType]||'').trim()
+        });
+      }
+      if (!results.length) { statusEl.textContent = '⚠ No MI/IN/OH hospitals found'; return; }
+      localStorage.setItem(HOSP_KEY, JSON.stringify(results));
+      statusEl.textContent = '✓ ' + results.length + ' hospitals saved';
+      buildFacilityList();
+    } catch(err) { statusEl.textContent = '⚠ Error: ' + err.message; }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function loadASCs(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('ascStatus');
+  statusEl.textContent = 'Loading...';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const lines = e.target.result.split('\n').filter(l => l.trim());
+      if (lines.length < 2) { statusEl.textContent = '⚠ File empty'; return; }
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+      // Detect file format: iQIES uses fac_name+state_cd, quality file uses facility_name+state
+      const isIQIES = headers.includes('fac_name') || headers.includes('prvdr_type_id');
+      let iName, iAddr, iCity, iState, iZip, iPhone, iType, iTerm;
+      if (isIQIES) {
+        iName  = headers.indexOf('fac_name');
+        iAddr  = headers.indexOf('st_adr');
+        iCity  = headers.indexOf('city_name');
+        iState = headers.indexOf('state_cd');
+        iZip   = headers.indexOf('zip_cd');
+        iPhone = headers.indexOf('phne_num');
+        iType  = headers.indexOf('prvdr_type_id');
+        iTerm  = headers.indexOf('pgm_trmntn_cd');
+      } else {
+        iName  = headers.findIndex(h => h.includes('facility_name'));
+        iAddr  = headers.findIndex(h => h === 'address');
+        iCity  = headers.findIndex(h => h.includes('city'));
+        iState = headers.findIndex(h => h === 'state');
+        iZip   = headers.findIndex(h => h.includes('zip'));
+        iPhone = headers.findIndex(h => h.includes('telephone') || h.includes('phone'));
+        iType  = -1; iTerm = -1;
+      }
+      if (iName < 0 || iState < 0) {
+        statusEl.textContent = '⚠ Wrong file — download the Surgery Center (iQIES) file';
+        return;
+      }
+      const target = new Set(['MI','IN','OH']);
+      const results = [];
+      for (let i = 1; i < lines.length; i++) {
+        const c = parseCSVLine(lines[i]);
+        const state = (c[iState]||'').trim();
+        if (!target.has(state)) continue;
+        const name = (c[iName]||'').trim();
+        if (!name) continue;
+        // For iQIES: only include ASCs (type=11) and exclude terminated (pgm_trmntn_cd not blank)
+        if (isIQIES) {
+          const ptype = iType >= 0 ? (c[iType]||'').trim() : '';
+          if (ptype !== '11') continue;  // Only ASCs, skip HHAs (3) and Hospices (12)
+          const term = iTerm >= 0 ? (c[iTerm]||'').trim() : '';
+          if (term) continue;  // Skip terminated providers
+        }
+        results.push({
+          name,
+          address: iAddr  >= 0 ? (c[iAddr]||'').trim()  : '',
+          city:    iCity  >= 0 ? (c[iCity]||'').trim()  : '',
+          state,
+          zip:     iZip   >= 0 ? (c[iZip]||'').trim()   : '',
+          phone:   iPhone >= 0 ? (c[iPhone]||'').trim() : '',
+          ftype:   'asc',
+          htype:   'Ambulatory Surgical Center'
+        });
+      }
+      if (!results.length) { statusEl.textContent = '⚠ No MI/IN/OH surgery centers found'; return; }
+      localStorage.setItem(ASC_KEY, JSON.stringify(results));
+      statusEl.textContent = '✓ ' + results.length + ' surgery centers saved';
+      buildFacilityList();
+    } catch(err) { statusEl.textContent = '⚠ Error: ' + err.message; }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function renderProspects() {
+  if (!allFacilities.length) return;
+  const search = document.getElementById('prospectSearch').value.toLowerCase();
+  const state  = document.getElementById('prospectState').value;
+  const type   = document.getElementById('prospectType').value;
+  const existing = new Set(opps.map(o => o.account.toLowerCase().trim()));
+  const list = allFacilities.filter(f => {
+    if (state && f.state !== state) return false;
+    if (type  && f.ftype !== type)  return false;
+    if (search && !f.name.toLowerCase().includes(search) && !f.city.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const statsEl = document.getElementById('prospectStats');
+  statsEl.style.display = 'block';
+  const hospCnt = list.filter(f=>f.ftype==='hospital').length; const ascCnt = list.filter(f=>f.ftype==='asc').length; statsEl.textContent = `${list.length.toLocaleString()} facilities — ${hospCnt} hospitals, ${ascCnt} surgery centers`;
+  const wrap  = document.getElementById('prospectTableWrap');
+  const empty = document.getElementById('prospectEmpty');
+  if (!list.length) { wrap.style.display='none'; empty.style.display='block'; return; }
+  wrap.style.display = 'block'; empty.style.display = 'none';
+  setTimeout(initColResize, 0);
+  const show = list.slice(0, 500);
+  document.getElementById('prospectBody').innerHTML = show.map((f, i) => {
+    const inPipeline = existing.has(f.name.toLowerCase().trim());
+    const mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.name + ' ' + f.address + ' ' + f.city + ' ' + f.state);
+    const typeBadge = f.ftype === 'asc'
+      ? '<span style="font-size:11px;background:#eeedfe;color:#3c3489;padding:2px 8px;border-radius:20px;font-weight:600;">Surgery Ctr</span>'
+      : '<span style="font-size:11px;background:#e6f1fb;color:#0c447c;padding:2px 8px;border-radius:20px;font-weight:600;">Hospital</span>';
+    const actionBtn = inPipeline
+      ? '<span class="already-badge">In pipeline</span>'
+      : '<button class="add-prospect-btn" data-idx="' + i + '">+ Add</button>';
+    return '<tr><td style="font-size:13px;font-weight:500;">' + f.name + '</td><td>' + typeBadge + '</td><td style="font-size:12px;">' + (f.phone||'—') + '</td><td style="font-size:12px;">' + f.address + '</td><td style="font-size:12px;">' + f.city + '</td><td style="font-size:12px;">' + f.state + '</td><td style="font-size:12px;">' + (f.zip||'—') + '</td><td><div style="display:flex;gap:6px;align-items:center;"><a href="' + mapUrl + '" target="_blank" class="map-link">Map</a>' + actionBtn + '</div></td></tr>';
+  }).join('');
+  if (list.length > 500) {
+    document.getElementById('prospectBody').innerHTML += '<tr><td colspan="7" style="text-align:center;padding:10px;color:#888;font-size:12px;">Showing first 500 of ' + list.length.toLocaleString() + ' — use filters to narrow down.</td></tr>';
+  }
+  document.getElementById('prospectBody').addEventListener('click', function(e) {
+    const btn = e.target.closest('.add-prospect-btn');
+    if (!btn) return;
+    const f = list[+btn.dataset.idx];
+    if (!f) return;
+    editId = null;
+    ['fAccount','fContact','fTitle','fDept','fPhone','fEmail','fMfr','fProduct','fValue','fClose','fDate','fNotes','fAddr','fCity','fState','fZip'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('modalTitle').textContent = 'Add opportunity';
+    document.getElementById('deleteBtn').style.display = 'none';
+    document.getElementById('fAccount').value  = f.name;
+    document.getElementById('fPhone').value    = f.phone || '';
+    document.getElementById('fStage').value    = 'Prospect';
+    document.getElementById('fPriority').value = 'Medium';
+    document.getElementById('fFacility').value = f.ftype === 'asc' ? 'ASC' : 'Hospital';
+    document.getElementById('fAddr').value     = f.address || '';
+    document.getElementById('fCity').value     = f.city || '';
+    document.getElementById('fState').value    = f.state || '';
+    document.getElementById('fZip').value      = f.zip || '';
+    document.getElementById('fNotes').value    = '';
+    document.getElementById('modalOverlay').className = 'overlay open';
+  });
+}
+
+load(); render();
+setInterval(()=>{ if(unsaved) save(); }, 30000);
+
+// ── ONE-TIME DRISCOPE PROSPECT IMPORT ───────────────────────────
+(function(){
+  const FLAG = 'tec_driscope_import_v1';
+  if (localStorage.getItem(FLAG)) return;
+  const toImport = [{"account": "DMC Detroit Receiving Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Detroit", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "DMC Huron Valley-Sinai Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Commerce Township", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "DMC Sinai-Grace Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Detroit", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Flint", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Flint", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Greater Lansing", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Lansing", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Bay Region", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Bay City", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Oakland", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Pontiac", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Port Huron", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Port Huron", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "McLaren Macomb", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Mount Clemens", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Sparrow Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Lansing", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Sparrow Clinton Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "St. Johns", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Butterworth Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Grand Rapids", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Blodgett Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Grand Rapids", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Big Rapids Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Big Rapids", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Gerber Memorial", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Fremont", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Ludington Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Ludington", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health Reed City Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Reed City", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Spectrum Health United Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Greenville", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Trinity Health Grand Haven Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Grand Haven", "ostate": "MI", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Eskenazi Health", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Indianapolis", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Parkview Whitley Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbia City", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Parkview Huntington Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Huntington", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Parkview LaGrange Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "LaGrange", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Parkview Noble Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Kendallville", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Parkview Wabash County Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Wabash", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Witham Health Services", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Lebanon", "ostate": "IN", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic Main Campus", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Cleveland", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic Akron General", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Akron", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic Fairview Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Cleveland", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic Hillcrest Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Mayfield Heights", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic Marymount Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Garfield Heights", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Cleveland Clinic South Pointe Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Warrensville Heights", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "OhioHealth Riverside Methodist Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbus", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "OhioHealth Doctors Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbus", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "OhioHealth Dublin Methodist Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Dublin", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "OhioHealth Marion General Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Marion", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "OhioHealth Mansfield Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Mansfield", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Mount Carmel East Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbus", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Mount Carmel West Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbus", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Summa Health System - Akron Campus", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Akron", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Summa Health System - Barberton Campus", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Barberton", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Aultman Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Canton", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Kettering Health Main Campus", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Kettering", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Kettering Health Huber Heights", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Huber Heights", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Kettering Health Hamilton", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Hamilton", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "TriHealth Good Samaritan Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Cincinnati", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}, {"account": "Nationwide Children's Hospital", "contact": "", "title": "", "dept": "", "phone": "", "email": "", "mfr": "DriScope", "product": "", "value": 0, "close": "", "stage": "Prospect", "priority": "Medium", "date": "", "facility": "Hospital", "addr": "", "city": "Columbus", "ostate": "OH", "zip": "", "notes": "New prospect \u2014 not yet a DriScope customer", "history": [{"date": "2026-05-06", "note": "Opportunity created from DriScope prospect import."}]}];
+  let addedCount = 0;
+  const existingNames = new Set(opps.map(o => o.account.toLowerCase().trim()));
+  toImport.forEach(function(newOpp) {
+    if (!existingNames.has(newOpp.account.toLowerCase().trim())) {
+      newOpp.id = nextId++;
+      opps.push(newOpp);
+      addedCount++;
+    }
+  });
+  if (addedCount > 0) {
+    save(); render();
+    setTimeout(function(){ showToast('✓ ' + addedCount + ' DriScope prospects added to your pipeline', 'success'); }, 800);
+  }
+  localStorage.setItem(FLAG, '1');
+})();
+
+// Column resize for prospect table
+function initColResize() {
+  const table = document.querySelector('.p-table');
+  if (!table) return;
+  const ths = table.querySelectorAll('thead th');
+  ths.forEach(th => {
+    const handle = th.querySelector('.col-resize');
+    if (!handle) return;
+    let startX, startW;
+    handle.addEventListener('mousedown', function(e) {
+      startX = e.pageX;
+      startW = th.offsetWidth;
+      th.classList.add('resizing');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      function onMove(e) {
+        const newW = Math.max(50, startW + (e.pageX - startX));
+        th.style.width = newW + 'px';
+        th.style.minWidth = newW + 'px';
+      }
+      function onUp() {
+        th.classList.remove('resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      e.preventDefault();
+    });
+  });
+}
+
+</script>
+
+<!-- MAP PAGE -->
+<div class="page" id="page-map">
+  <div id="map-container">
+    <div id="facility-map"></div>
+    <div class="map-filter-bar">
+      <button class="map-filter-btn active" id="mf-all" onclick="setMapFilter('all')">All</button>
+      <button class="map-filter-btn" id="mf-hospital" onclick="setMapFilter('hospital')">Hospitals</button>
+      <button class="map-filter-btn" id="mf-asc" onclick="setMapFilter('asc')">Surgery Centers</button>
+      <button class="map-filter-btn" id="mf-pipeline" onclick="setMapFilter('pipeline')">In Pipeline</button>
+    </div>
+    <div class="map-count-badge" id="map-count">0 facilities</div>
+    <div id="map-empty-msg" style="display:none;">Load facility data in the Prospect tab first.</div>
+  </div>
+  <div id="map-sidebar" class="collapsed">
+    <div id="map-sidebar-inner">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="map-sidebar-header" id="sb-name">—</div>
+        <button onclick="closeSidebar()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#888;padding:0 4px;">×</button>
+      </div>
+      <div class="map-sidebar-sub" id="sb-type">—</div>
+      <div class="map-info-row"><span class="map-info-label">Address</span><span class="map-info-val" id="sb-addr">—</span></div>
+      <div class="map-info-row"><span class="map-info-label">Phone</span><span class="map-info-val" id="sb-phone">—</span></div>
+      <div class="map-info-row"><span class="map-info-label">City</span><span class="map-info-val" id="sb-city">—</span></div>
+      <div class="map-info-row"><span class="map-info-label">Zip</span><span class="map-info-val" id="sb-zip">—</span></div>
+      <hr class="map-divider"/>
+      <div class="map-pipeline-section">
+        <div class="map-pipeline-title">Pipeline Opportunities</div>
+        <div id="sb-opps">—</div>
+        <button class="map-add-opp-btn" id="sb-add-btn" onclick="addOppFromMap()">+ Add to Pipeline</button>
+      </div>
+      <hr class="map-divider"/>
+      <div>
+        <div class="map-pipeline-title">Notes</div>
+        <textarea class="map-notes-area" id="sb-notes" placeholder="Add notes about this facility..."></textarea>
+        <button class="map-save-note" onclick="saveMapNote()">Save Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script>
+// ── MAP TAB ──────────────────────────────────────────────────────
+let leafletMap = null;
+let markerCluster = null;
+let allMapMarkers = [];
+let mapFilter = 'all';
+let selectedFacility = null;
+let mapNotes = {};  // keyed by facility name
+const MAP_NOTES_KEY = 'tec_map_notes';
+
+// Geocode cache to avoid re-geocoding
+let geoCache = {};
+const GEO_CACHE_KEY = 'tec_geo_cache';
+
+function loadMapNotes() {
+  try { mapNotes = JSON.parse(localStorage.getItem(MAP_NOTES_KEY) || '{}'); } catch(e) { mapNotes = {}; }
+}
+function saveMapNote() {
+  if (!selectedFacility) return;
+  const note = document.getElementById('sb-notes').value.trim();
+  mapNotes[selectedFacility.name] = note;
+  localStorage.setItem(MAP_NOTES_KEY, JSON.stringify(mapNotes));
+  const btn = document.querySelector('.map-save-note');
+  btn.textContent = 'Saved ✓';
+  setTimeout(() => btn.textContent = 'Save Note', 1500);
+}
+
+function initMap() {
+  if (leafletMap) return;
+  leafletMap = L.map('facility-map', { zoomControl: true }).setView([41.8, -84.5], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 18
+  }).addTo(leafletMap);
+  markerCluster = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
+  leafletMap.addLayer(markerCluster);
+  loadMapNotes();
+  try { geoCache = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || '{}'); } catch(e) { geoCache = {}; }
+}
+
+function getMarkerIcon(ftype, inPipeline) {
+  const color = inPipeline ? '#27500a' : (ftype === 'asc' ? '#3c3489' : '#0c447c');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32">
+    <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="12" cy="12" r="5" fill="#fff" opacity="0.9"/>
+  </svg>`;
+  return L.divIcon({
+    html: svg, className: '', iconSize: [24, 32], iconAnchor: [12, 32], popupAnchor: [0, -32]
+  });
+}
+
+function setMapFilter(f) {
+  mapFilter = f;
+  document.querySelectorAll('.map-filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mf-' + f).classList.add('active');
+  applyMapFilter();
+}
+
+function applyMapFilter() {
+  if (!markerCluster) return;
+  markerCluster.clearLayers();
+  const pipelineNames = new Set(opps.map(o => o.account.toLowerCase().trim()));
+  const visible = allMapMarkers.filter(m => {
+    if (mapFilter === 'hospital') return m.ftype === 'hospital';
+    if (mapFilter === 'asc') return m.ftype === 'asc';
+    if (mapFilter === 'pipeline') return pipelineNames.has(m.facilityName.toLowerCase().trim());
+    return true;
+  });
+  visible.forEach(m => markerCluster.addLayer(m.marker));
+  document.getElementById('map-count').textContent = visible.length.toLocaleString() + ' facilities';
+}
+
+let geocodeBatch = [];
+let geocodeTimer = null;
+
+async function geocodeAndPlot(facilities) {
+  const countEl = document.getElementById('map-count');
+  const emptyMsg = document.getElementById('map-empty-msg');
+  allMapMarkers = [];
+  markerCluster.clearLayers();
+
+  if (!facilities.length) {
+    emptyMsg.style.display = 'block';
+    countEl.textContent = '0 facilities';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+
+  const pipelineNames = new Set(opps.map(o => o.account.toLowerCase().trim()));
+  let placed = 0;
+
+  // Batch geocoding with delay to respect Nominatim rate limit (1 req/sec)
+  for (let i = 0; i < facilities.length; i++) {
+    const f = facilities[i];
+    const key = (f.address + ',' + f.city + ',' + f.state).toLowerCase();
+
+    let lat, lng;
+    if (geoCache[key]) {
+      ({ lat, lng } = geoCache[key]);
+    } else {
+      // Rate limit: 1 request per second
+      if (i > 0) await new Promise(r => setTimeout(r, 1100));
+      try {
+        const q = encodeURIComponent((f.address + ' ' + f.city + ' ' + f.state + ' USA').replace(/\s+/g,' '));
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+          headers: { 'Accept-Language': 'en-US', 'User-Agent': 'TEC-Sales-CRM/1.0' }
+        });
+        const data = await res.json();
+        if (data && data[0]) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+          geoCache[key] = { lat, lng };
+          // Save cache periodically
+          if (i % 20 === 0) localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(geoCache));
+        }
+      } catch(e) {}
+    }
+
+    if (!lat || !lng) continue;
+
+    const inPipeline = pipelineNames.has(f.name.toLowerCase().trim());
+    const marker = L.marker([lat, lng], { icon: getMarkerIcon(f.ftype, inPipeline) });
+    marker.on('click', () => openSidebar(f));
+    allMapMarkers.push({ marker, ftype: f.ftype, facilityName: f.name });
+    markerCluster.addLayer(marker);
+    placed++;
+    countEl.textContent = placed + ' placed / ' + (i+1) + ' of ' + facilities.length + ' geocoded...';
+  }
+
+  localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(geoCache));
+  applyMapFilter();
+}
+
+function openSidebar(f) {
+  selectedFacility = f;
+  document.getElementById('map-sidebar').classList.remove('collapsed');
+  document.getElementById('sb-name').textContent = f.name;
+  document.getElementById('sb-type').textContent = f.ftype === 'asc' ? 'Ambulatory Surgery Center' : ('Hospital — ' + (f.htype || ''));
+  document.getElementById('sb-addr').textContent = f.address || '—';
+  document.getElementById('sb-phone').textContent = f.phone || '—';
+  document.getElementById('sb-city').textContent = f.city + (f.state ? ', ' + f.state : '');
+  document.getElementById('sb-zip').textContent = f.zip || '—';
+  document.getElementById('sb-notes').value = mapNotes[f.name] || '';
+
+  // Show pipeline opps for this facility
+  const matched = opps.filter(o => o.account.toLowerCase().trim() === f.name.toLowerCase().trim());
+  const oppsDiv = document.getElementById('sb-opps');
+  if (matched.length) {
+    oppsDiv.innerHTML = matched.map(o =>
+      `<div class="map-opp-card" onclick="openDetail(${o.id})">
+        <div class="map-opp-name">${o.product || o.mfr || 'Opportunity'}</div>
+        <div class="map-opp-meta">${o.stage} · ${o.mfr} · $${(o.value||0).toLocaleString()}</div>
+        ${o.notes ? '<div class="map-opp-meta" style="margin-top:4px;font-style:italic;">' + o.notes.slice(0,80) + (o.notes.length>80?'…':'') + '</div>' : ''}
+      </div>`
+    ).join('');
+  } else {
+    oppsDiv.innerHTML = '<div style="font-size:13px;color:#aaa;margin-bottom:8px;">No pipeline opportunities yet.</div>';
+  }
+
+  // Show/hide add button
+  document.getElementById('sb-add-btn').style.display = 'block';
+  // Resize map
+  setTimeout(() => leafletMap && leafletMap.invalidateSize(), 250);
+}
+
+function closeSidebar() {
+  document.getElementById('map-sidebar').classList.add('collapsed');
+  selectedFacility = null;
+  setTimeout(() => leafletMap && leafletMap.invalidateSize(), 250);
+}
+
+function addOppFromMap() {
+  if (!selectedFacility) return;
+  switchTab('crm');
+  setTimeout(() => {
+    openModal();
+    document.getElementById('fAccount').value = selectedFacility.name;
+    document.getElementById('fPhone').value = selectedFacility.phone || '';
+    document.getElementById('fFacility').value = selectedFacility.ftype === 'asc' ? 'ASC' : 'Hospital';
+    document.getElementById('fAddr').value     = selectedFacility.address || '';
+    document.getElementById('fCity').value     = selectedFacility.city || '';
+    document.getElementById('fState').value    = selectedFacility.state || '';
+    document.getElementById('fZip').value      = selectedFacility.zip || '';
+    document.getElementById('fNotes').value    = mapNotes[selectedFacility.name] || '';
+  }, 100);
+}
+
+let mapInitialized = false;
+let mapGeocoding = false;
+
+function initMapTab() {
+  initMap();
+  if (!allFacilities.length) {
+    document.getElementById('map-empty-msg').style.display = 'block';
+    document.getElementById('map-count').textContent = '0 facilities';
+    return;
+  }
+  if (mapInitialized) {
+    applyMapFilter();
+    return;
+  }
+  mapInitialized = true;
+  geocodeAndPlot(allFacilities);
+}
+
+// ── ACCOUNT AUTOCOMPLETE ─────────────────────────────────────────
+function onAccountInput() {
+  const val = (document.getElementById('fAccount').value || '').trim().toLowerCase();
+  const sugDiv = document.getElementById('accountSuggestions');
+  const hintDiv = document.getElementById('accountAddHint');
+  if (!val || val.length < 2) { sugDiv.style.display='none'; hintDiv.style.display='none'; return; }
+  const matches = allFacilities.filter(f => f.name.toLowerCase().includes(val)).slice(0, 8);
+  if (matches.length) {
+    sugDiv.innerHTML = matches.map((f,i) =>
+      `<div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f0f0ec;"
+        onmousedown="selectAccountSuggestion(${i})"
+        onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''"
+      ><strong>${f.name}</strong> <span style="color:#888;font-size:11px;">${f.city}, ${f.state} · ${f.ftype==='asc'?'Surgery Center':'Hospital'}</span></div>`
+    ).join('');
+    sugDiv._matches = matches;
+    sugDiv.style.display = 'block';
+    hintDiv.style.display = 'none';
+  } else {
+    sugDiv.style.display = 'none';
+    hintDiv.style.display = 'block';
+  }
+}
+
+function selectAccountSuggestion(i) {
+  const sugDiv = document.getElementById('accountSuggestions');
+  const f = sugDiv._matches[i];
+  if (!f) return;
+  document.getElementById('fAccount').value = f.name;
+  document.getElementById('fPhone').value  = f.phone || '';
+  document.getElementById('fAddr').value   = f.address || '';
+  document.getElementById('fCity').value   = f.city || '';
+  document.getElementById('fState').value  = f.state || '';
+  document.getElementById('fZip').value    = f.zip || '';
+  document.getElementById('fFacility').value = f.ftype === 'asc' ? 'ASC' : 'Hospital';
+  sugDiv.style.display = 'none';
+  document.getElementById('accountAddHint').style.display = 'none';
+}
+
+function hideAccountSuggestions() {
+  const sugDiv = document.getElementById('accountSuggestions');
+  if (sugDiv) sugDiv.style.display = 'none';
+  // Show "add to prospects" hint if typed name not found
+  const val = (document.getElementById('fAccount').value || '').trim().toLowerCase();
+  const hintDiv = document.getElementById('accountAddHint');
+  if (val.length > 1 && allFacilities.length) {
+    const exact = allFacilities.some(f => f.name.toLowerCase() === val);
+    hintDiv.style.display = exact ? 'none' : 'block';
+  }
+}
+
+function addAccountToProspects(e) {
+  e.preventDefault();
+  const name = (document.getElementById('fAccount').value || '').trim();
+  const addr = (document.getElementById('fAddr').value || '').trim();
+  const city = (document.getElementById('fCity').value || '').trim();
+  const state = (document.getElementById('fState').value || '').trim();
+  const zip  = (document.getElementById('fZip').value || '').trim();
+  const phone = (document.getElementById('fPhone').value || '').trim();
+  const ftype = (document.getElementById('fFacility').value || '').toLowerCase().includes('asc') ? 'asc' : 'hospital';
+  if (!name) return;
+  // Pre-fill the facility modal with known data
+  document.getElementById('ffName').value  = name;
+  document.getElementById('ffPhone').value = phone;
+  document.getElementById('ffAddr').value  = addr;
+  document.getElementById('ffCity').value  = city;
+  if (state) document.getElementById('ffState').value = state;
+  document.getElementById('ffZip').value   = zip;
+  document.getElementById('ffType').value  = ftype;
+  closeModal();
+  openAddFacilityModal();
+}
+
+// ── ADD FACILITY MODAL ───────────────────────────────────────────
+const MANUAL_KEY = 'tec_manual_facilities';
+
+function openAddFacilityModal() {
+  document.getElementById('facilityOverlay').style.display = 'flex';
+}
+function closeFacilityModal(e) {
+  if (e && e.target !== document.getElementById('facilityOverlay')) return;
+  document.getElementById('facilityOverlay').style.display = 'none';
+}
+
+function saveFacility() {
+  const name  = document.getElementById('ffName').value.trim();
+  const city  = document.getElementById('ffCity').value.trim();
+  const state = document.getElementById('ffState').value.trim();
+  if (!name || !city || !state) { alert('Facility name, city, and state are required.'); return; }
+  const newFac = {
+    name,
+    ftype: document.getElementById('ffType').value,
+    phone: document.getElementById('ffPhone').value.trim(),
+    address: document.getElementById('ffAddr').value.trim(),
+    city,
+    state,
+    zip: document.getElementById('ffZip').value.trim(),
+    htype: document.getElementById('ffType').value === 'asc' ? 'Ambulatory Surgical Center' : 'Acute Care Hospital',
+    manual: true
+  };
+  // Save to manual list
+  let manual = [];
+  try { manual = JSON.parse(localStorage.getItem(MANUAL_KEY) || '[]'); } catch(e) {}
+  manual.push(newFac);
+  localStorage.setItem(MANUAL_KEY, JSON.stringify(manual));
+  // Merge into allFacilities and rebuild
+  allFacilities = [...allFacilities, newFac].sort((a,b) => a.name.localeCompare(b.name));
+  facilitiesLoaded = true;
+  // Reset map so it re-geocodes with new facility
+  mapInitialized = false;
+  // Clear form
+  ['ffName','ffPhone','ffAddr','ffCity','ffZip'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('facilityOverlay').style.display = 'none';
+  // Switch to map tab
+  switchTab('map');
+}
+
+// Merge manual facilities on init
+const _origInitProspect = initProspect;
+function initProspect() {
+  _origInitProspect();
+  // Also load manual facilities
+  try {
+    const manual = JSON.parse(localStorage.getItem(MANUAL_KEY) || '[]');
+    if (manual.length) {
+      // Add any not already in allFacilities
+      const names = new Set(allFacilities.map(f => f.name.toLowerCase()));
+      const newOnes = manual.filter(f => !names.has(f.name.toLowerCase()));
+      if (newOnes.length) {
+        allFacilities = [...allFacilities, ...newOnes].sort((a,b) => a.name.localeCompare(b.name));
+        if (allFacilities.length) { facilitiesLoaded = true; renderProspects(); }
+      }
+    }
+  } catch(e) {}
+}
+
+
+// ── TOAST NOTIFICATION ───────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' '+type : '');
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── AUTO-BACKUP ON CLOSE ─────────────────────────────────────────
+// ── AUTO-BACKUP ON CLOSE ────────────────────────────────────────
+const AUTO_BACKUP_KEY = 'tec_auto_backup';
+let autoBackupEnabled = localStorage.getItem(AUTO_BACKUP_KEY) !== 'false';
+
+function buildCSV() {
+  const headers = ['Account','Contact','Title','Department','Phone','Email','Manufacturer',
+    'Product','Value','Close Date','Stage','Priority','Facility','Follow-up Date',
+    'Address','City','State','Zip','Notes'];
+  const rows = opps.map(o => [
+    o.account,o.contact,o.title,o.dept,o.phone,o.email,o.mfr,o.product,
+    o.value,o.close,o.stage,o.priority,o.facility,o.date,
+    o.addr,o.city,o.ostate,o.zip,o.notes
+  ].map(v => '"'+String(v||'').replace(/"/g,'""')+'"').join(','));
+  return [headers.join(','), ...rows].join('\n');
+}
+
+function updateAutoBackupBtn() {
+  const btn = document.getElementById('autoBackupToggle');
+  if (!btn) return;
+  if (autoBackupEnabled) {
+    btn.textContent = '☁ Auto-Backup: ON';
+    btn.style.color = '#27500a';
+    btn.style.borderColor = '#7bb661';
+    btn.style.background = '#f0f7eb';
+  } else {
+    btn.textContent = '☁ Auto-Backup: OFF';
+    btn.style.color = '#888';
+    btn.style.borderColor = '#ddd';
+    btn.style.background = '';
+  }
+}
+
+function toggleAutoBackup() {
+  autoBackupEnabled = !autoBackupEnabled;
+  localStorage.setItem(AUTO_BACKUP_KEY, autoBackupEnabled ? 'true' : 'false');
+  updateAutoBackupBtn();
+  showToast(autoBackupEnabled
+    ? 'Auto-backup ON — CSV will download each time you close the app'
+    : 'Auto-backup OFF', autoBackupEnabled ? 'success' : '');
+}
+
+window.addEventListener('beforeunload', function() {
+  if (!opps || !opps.length) return;
+  // Auto Drive backup if signed in
+  if (driveToken) {
+    try { doBackupToDrive(); } catch(e) {}
+  }
+  // Auto CSV download if enabled
+  if (autoBackupEnabled) {
+    try {
+      const csv = buildCSV();
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'TEC_CRM_backup_' + new Date().toISOString().slice(0,10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch(e) {}
+  }
+});
+
+// Init button state on load
+document.addEventListener('DOMContentLoaded', function() {
+  updateAutoBackupBtn();
+  // Update Drive button label if client ID already saved
+  if (getDriveClientId()) {
+    const btn = document.getElementById('driveBackupBtn');
+    if (btn) btn.title = 'Connected — click to save backup to Google Drive now';
+  }
+});
+
+
+
+
+// ── BULK SELECT MODE ─────────────────────────────────────────────
+let selectMode = false;
+let selectedIds = new Set();
+
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  selectedIds.clear();
+  const btn = document.getElementById('selectModeBtn');
+  const panel = document.getElementById('bulkPanel');
+  const cbHead = document.getElementById('cbHeadTh');
+  btn.classList.toggle('active', selectMode);
+  btn.textContent = selectMode ? '✕ Cancel Select' : '☑ Select';
+  panel.classList.toggle('show', selectMode);
+  if (cbHead) cbHead.style.display = selectMode ? '' : 'none';
+  render();
+}
+
+function exitSelectMode() {
+  selectMode = false;
+  selectedIds.clear();
+  const btn = document.getElementById('selectModeBtn');
+  const panel = document.getElementById('bulkPanel');
+  const cbHead = document.getElementById('cbHeadTh');
+  if (btn) { btn.classList.remove('active'); btn.textContent = '☑ Select'; }
+  if (panel) panel.classList.remove('show');
+  if (cbHead) cbHead.style.display = 'none';
+  render();
+}
+
+function rowClick(event, id) {
+  if (selectMode) {
+    toggleRow(id, !selectedIds.has(id));
+  } else {
+    openDetail(id);
+  }
+}
+
+function toggleRow(id, checked) {
+  if (checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+  // Update just this row without full re-render
+  const rows = document.querySelectorAll('#tableBody tr');
+  rows.forEach(tr => {
+    const cb = tr.querySelector('input[type=checkbox]');
+    if (!cb) return;
+    // Find matching row by its onclick attribute id
+    if (tr.getAttribute('onclick') && tr.getAttribute('onclick').includes('rowClick(event,' + id + ')')) {
+      tr.classList.toggle('sel-row', checked);
+      cb.checked = checked;
+    }
+  });
+  const allCb = document.getElementById('selectAllCb');
+  if (allCb) {
+    const allCbs = document.querySelectorAll('#tableBody input[type=checkbox]');
+    const allChecked = allCbs.length > 0 && [...allCbs].every(c => c.checked);
+    const anyChecked = [...allCbs].some(c => c.checked);
+    allCb.checked = allChecked;
+    allCb.indeterminate = anyChecked && !allChecked;
+  }
+  updateBulkPanel();
+}
+
+function toggleSelectAll(checked) {
+  // Get all currently visible opp ids from rows
+  const rows = document.querySelectorAll('#tableBody tr');
+  rows.forEach(tr => {
+    const onclick = tr.getAttribute('onclick') || '';
+    const match = onclick.match(/rowClick\(event,(\d+)\)/);
+    if (match) {
+      const id = +match[1];
+      if (checked) selectedIds.add(id);
+      else selectedIds.delete(id);
+      tr.classList.toggle('sel-row', checked);
+      const cb = tr.querySelector('input[type=checkbox]');
+      if (cb) cb.checked = checked;
+    }
+  });
+  updateBulkPanel();
+}
+
+function updateBulkPanel() {
+  const countEl = document.getElementById('bulkCount');
+  if (countEl) countEl.textContent = selectedIds.size + ' selected';
+}
+
+function bulkDelete() {
+  const n = selectedIds.size;
+  if (!n) { alert('No opportunities selected.'); return; }
+  if (!confirm('Delete ' + n + ' opportunit' + (n===1?'y':'ies') + '? This cannot be undone.')) return;
+  opps = opps.filter(o => !selectedIds.has(o.id));
+  save();
+  exitSelectMode();
+  showToast(n + ' opportunit' + (n===1?'y':'ies') + ' deleted', '');
+}
+
+function bulkSetDate() {
+  const n = selectedIds.size;
+  if (!n) { alert('No opportunities selected.'); return; }
+  const d = prompt('Set close date for ' + n + ' selected opportunit' + (n===1?'y':'ies') + '\nEnter date (YYYY-MM-DD):');
+  if (!d) return;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) { alert('Please use YYYY-MM-DD format (e.g. 2026-12-31)'); return; }
+  opps.forEach(o => { if (selectedIds.has(o.id)) o.close = d; });
+  save();
+  exitSelectMode();
+  showToast('Close date updated for ' + n + ' opportunit' + (n===1?'y':'ies'), 'success');
+}
+
+function bulkSetStage() {
+  const n = selectedIds.size;
+  if (!n) { alert('No opportunities selected.'); return; }
+  const stages = ['Prospect','Qualified','Proposal','Negotiation','Closed won','Closed lost'];
+  const choice = prompt('Change stage for ' + n + ' opportunit' + (n===1?'y':'ies') + '\n\nEnter a number:\n1 - Prospect\n2 - Qualified\n3 - Proposal\n4 - Negotiation\n5 - Closed won\n6 - Closed lost');
+  if (!choice) return;
+  const idx = parseInt(choice) - 1;
+  if (idx < 0 || idx >= stages.length) { alert('Please enter a number 1-6'); return; }
+  const stage = stages[idx];
+  const today = new Date().toISOString().slice(0,10);
+  opps.forEach(o => {
+    if (selectedIds.has(o.id)) {
+      const prev = o.stage;
+      o.stage = stage;
+      if (!o.history) o.history = [];
+      if (prev !== stage) o.history.push({date: today, note: 'Stage changed from ' + prev + ' to ' + stage + ' (bulk update).'});
+    }
+  });
+  save();
+  exitSelectMode();
+  showToast(n + ' opportunit' + (n===1?'y':'ies') + ' moved to ' + stage, 'success');
+}
+
+
+function bulkSetProduct() {
+  const n = selectedIds.size;
+  if (!n) { alert('No opportunities selected.'); return; }
+  const val = prompt('Set product for ' + n + ' selected opportunit' + (n===1?'y':'ies') + ':\n(e.g. DriScope 404, Filter Kit)');
+  if (val === null) return;
+  opps.forEach(o => { if (selectedIds.has(o.id)) o.product = val.trim(); });
+  save();
+  exitSelectMode();
+  showToast('Product updated for ' + n + ' opportunit' + (n===1?'y':'ies'), 'success');
+}
+
+function bulkSetValue() {
+  const n = selectedIds.size;
+  if (!n) { alert('No opportunities selected.'); return; }
+  const val = prompt('Set deal value for ' + n + ' selected opportunit' + (n===1?'y':'ies') + ':\n(enter number, e.g. 1500)');
+  if (val === null) return;
+  const num = parseFloat(val.replace(/[^0-9.]/g, ''));
+  if (isNaN(num)) { alert('Please enter a valid number.'); return; }
+  opps.forEach(o => { if (selectedIds.has(o.id)) o.value = num; });
+  save();
+  exitSelectMode();
+  showToast('Value set to $' + num.toLocaleString() + ' for ' + n + ' opportunit' + (n===1?'y':'ies'), 'success');
+}
+
+
+// ── GOOGLE DRIVE BACKUP ──────────────────────────────────────────
+const DRIVE_CLIENT_ID_KEY = 'tec_drive_client_id';
+const DRIVE_TOKEN_KEY     = 'tec_drive_token';
+const DRIVE_FOLDER_KEY    = 'tec_drive_folder_id';
+let driveToken  = null;
+let driveFolderId = localStorage.getItem(DRIVE_FOLDER_KEY) || null;
+
+function getDriveClientId() {
+  return localStorage.getItem(DRIVE_CLIENT_ID_KEY) || '';
+}
+
+function saveDriveClientId() {
+  const id = (document.getElementById('driveClientIdInput').value || '').trim();
+  const errEl = document.getElementById('driveSetupError');
+  errEl.style.display = 'none';
+  if (!id || !id.includes('.apps.googleusercontent.com')) {
+    errEl.textContent = "That doesn't look like a valid Client ID. It should end in .apps.googleusercontent.com";
+    errEl.style.display = 'block';
+    return;
+  }
+  localStorage.setItem(DRIVE_CLIENT_ID_KEY, id);
+  closeDriveSetup();
+  // Immediately try to connect
+  driveSignIn(true);
+}
+
+function closeDriveSetup() {
+  document.getElementById('driveSetupOverlay').style.display = 'none';
+}
+
+function openDriveSetup() {
+  const overlay = document.getElementById('driveSetupOverlay');
+  if (!overlay) {
+    alert('Setup screen not found — please re-download the latest CRM file and re-upload to GitHub.');
+    return;
+  }
+  const originEl = document.getElementById('originUrl');
+  if (originEl) originEl.textContent = window.location.origin || window.location.href.split('/').slice(0,3).join('/');
+  const saved = getDriveClientId();
+  const input = document.getElementById('driveClientIdInput');
+  if (saved && input) input.value = saved;
+  overlay.style.display = 'flex';
+}
+
+function driveSignIn(afterSetup) {
+  const clientId = getDriveClientId();
+  if (!clientId) { openDriveSetup(); return; }
+
+  // Check Google Identity Services library loaded
+  if (typeof google === 'undefined' || !google.accounts) {
+    showToast('Google sign-in library not loaded. Make sure you are opening the CRM from your GitHub Pages URL (https://), not a local file.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('driveBackupBtn');
+  if (btn) { btn.textContent = '☁ Connecting...'; btn.disabled = true; }
+
+  try {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      callback: (resp) => {
+        if (btn) { btn.textContent = '☁ Drive Backup'; btn.disabled = false; }
+        if (resp.error) {
+          showToast('Google sign-in failed: ' + resp.error + '. Make sure your Client ID is correct and the GitHub Pages URL is added as an Authorized Origin in Google Cloud Console.', 'error');
+          return;
+        }
+        driveToken = resp.access_token;
+        doBackupToDrive();
+      }
+    });
+    client.requestAccessToken({ prompt: 'consent' });
+  } catch(e) {
+    if (btn) { btn.textContent = '☁ Drive Backup'; btn.disabled = false; }
+    showToast('Sign-in error: ' + e.message, 'error');
+  }
+}
+
+async function driveBackup() {
+  const clientId = getDriveClientId();
+  if (!clientId) {
+    // No client ID saved — show setup
+    openDriveSetup();
+    return;
+  }
+  // Has client ID — check Google library
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+    alert('Setup issue: The Google sign-in library did not load.\n\nMake sure you are opening the CRM from your GitHub Pages URL (https://andrewwilson.github.io/...) and not a local file.\n\nAlso check that popups are not blocked in your browser.');
+    return;
+  }
+  if (!driveToken) {
+    driveSignIn(false);
+    return;
+  }
+  await doBackupToDrive();
+}
+
+async function doBackupToDrive() {
+  const btn = document.getElementById('driveBackupBtn');
+  if (btn) { btn.textContent = '☁ Saving...'; btn.disabled = true; }
+  try {
+    // 1. Get or create the TEC CRM Backups folder
+    if (!driveFolderId) {
+      driveFolderId = await getOrCreateFolder('TEC CRM Backups');
+      localStorage.setItem(DRIVE_FOLDER_KEY, driveFolderId);
+    }
+    // 2. Build CSV content
+    const csv = buildCSV();
+    const filename = 'TEC_CRM_backup_' + new Date().toISOString().slice(0,10) + '.csv';
+    // 3. Upload file (multipart)
+    const boundary = 'tec_crm_boundary';
+    const meta = JSON.stringify({ name: filename, parents: [driveFolderId] });
+    const body = [
+      '--' + boundary,
+      'Content-Type: application/json; charset=UTF-8',
+      '',
+      meta,
+      '--' + boundary,
+      'Content-Type: text/csv',
+      '',
+      csv,
+      '--' + boundary + '--'
+    ].join('\r\n');
+
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + driveToken,
+        'Content-Type': 'multipart/related; boundary=' + boundary
+      },
+      body: body
+    });
+
+    if (res.status === 401) {
+      // Token expired — re-auth
+      driveToken = null;
+      driveSignIn(false);
+      return;
+    }
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Upload failed');
+    }
+
+    const data = await res.json();
+    if (btn) { btn.textContent = '☁ Saved ✓'; btn.disabled = false; }
+    setTimeout(() => { if (btn) btn.textContent = '☁ Drive Backup'; }, 3000);
+    showToast('✓ Backup saved to Google Drive → TEC CRM Backups/' + filename, 'success');
+
+  } catch(e) {
+    if (btn) { btn.textContent = '☁ Drive Backup'; btn.disabled = false; }
+    showToast('Drive save failed: ' + e.message, 'error');
+  }
+}
+
+async function getOrCreateFolder(name) {
+  // Search for existing folder
+  const q = encodeURIComponent('mimeType="application/vnd.google-apps.folder" and name="' + name + '" and trashed=false');
+  const res = await fetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)', {
+    headers: { 'Authorization': 'Bearer ' + driveToken }
+  });
+  const data = await res.json();
+  if (data.files && data.files.length > 0) return data.files[0].id;
+  // Create it
+  const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + driveToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder' })
+  });
+  const folder = await createRes.json();
+  return folder.id;
+}
+
+
+// ── ACTIVITY LOGGING ─────────────────────────────────────────────
+let selectedActType = '📞 Call';
+
+function selectActType(btn, type) {
+  selectedActType = type;
+  document.querySelectorAll('.act-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function logActivity(id) {
+  const o = opps.find(x => x.id === id);
+  if (!o) return;
+  if (!o.history) o.history = [];
+  const note = (document.getElementById('actNoteInput').value || '').trim();
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const timestamp = dateStr + ' ' + timeStr;
+  const fullNote = selectedActType + (note ? ' — ' + note : '');
+  o.history.push({ date: timestamp, note: fullNote });
+  save();
+  // Refresh detail panel
+  openDetail(id);
+  showToast('Activity logged ✓', 'success');
+}
+
+</script>
+
+
+<!-- Add Facility Modal -->
+<div class="overlay" id="facilityOverlay" onclick="closeFacilityModal(event)" style="display:none;">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
+    <h3>Add Facility to Prospect List</h3>
+    <div class="form-grid">
+      <div class="form-group full"><label>Facility name *</label><input id="ffName" placeholder="e.g. Detroit Medical Center"/></div>
+      <div class="form-group"><label>Facility type *</label>
+        <select id="ffType">
+          <option value="hospital">Hospital</option>
+          <option value="asc">Surgery Center (ASC)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Phone</label><input id="ffPhone" placeholder="e.g. 313-555-0100"/></div>
+      <div class="form-group full"><label>Address</label><input id="ffAddr" placeholder="e.g. 4201 St Antoine St"/></div>
+      <div class="form-group"><label>City *</label><input id="ffCity" placeholder="e.g. Detroit"/></div>
+      <div class="form-group"><label>State *</label>
+        <select id="ffState">
+          <option value="MI">Michigan (MI)</option>
+          <option value="IN">Indiana (IN)</option>
+          <option value="OH">Ohio (OH)</option>
+          <option value="">Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Zip</label><input id="ffZip" placeholder="e.g. 48201"/></div>
+    </div>
+    <div class="modal-footer">
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn" onclick="closeFacilityModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveFacility()">Save &amp; Go to Map</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="toast" id="toast"></div>
+
+
+<!-- Google Drive Setup Modal -->
+<div class="overlay" id="driveSetupOverlay" style="display:none;" onclick="if(event.target===this)closeDriveSetup()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:580px;">
+    <h3 style="margin-bottom:6px;">Connect Google Drive</h3>
+    <p style="font-size:13px;color:#666;margin-bottom:18px;">One-time setup — takes about 10 minutes. After this, one click saves your backup straight to Google Drive.</p>
+
+    <div style="background:#f5f5f3;border-radius:10px;padding:16px 18px;font-size:13px;line-height:2;margin-bottom:18px;">
+      <strong>Step 1</strong> — Go to <a href="https://console.cloud.google.com" target="_blank" style="color:#0c447c;font-weight:600;">console.cloud.google.com</a> and sign in with your Google account<br>
+      <strong>Step 2</strong> — Click <em>Select a project</em> → <em>New Project</em> → name it <strong>TEC CRM</strong> → click Create<br>
+      <strong>Step 3</strong> — In the left menu go to <em>APIs &amp; Services → Library</em> → search <strong>Google Drive API</strong> → click it → click <strong>Enable</strong><br>
+      <strong>Step 4</strong> — Go to <em>APIs &amp; Services → OAuth consent screen</em> → choose <strong>External</strong> → fill in App name (<em>TEC CRM</em>) and your email → Save<br>
+      <strong>Step 5</strong> — Go to <em>APIs &amp; Services → Credentials</em> → click <strong>+ Create Credentials → OAuth Client ID</strong><br>
+      <strong>Step 6</strong> — Choose <strong>Web application</strong> → Under <em>Authorized JavaScript origins</em> click <strong>+ Add URI</strong> and paste: <code id="originUrl" style="background:#e8e8e8;padding:2px 6px;border-radius:4px;font-size:12px;">loading...</code><br>
+      <strong>Step 7</strong> — Click <strong>Create</strong> → copy the <strong>Client ID</strong> that appears (ends in .apps.googleusercontent.com)<br>
+      <strong>Step 8</strong> — Paste it below and click Save
+    </div>
+
+    <div class="form-group full" style="margin-bottom:16px;">
+      <label style="font-weight:600;">Your Google Client ID</label>
+      <input id="driveClientIdInput" placeholder="Paste Client ID here — ends in .apps.googleusercontent.com" style="font-size:12px;margin-top:6px;"/>
+    </div>
+
+    <div id="driveSetupError" style="display:none;background:#fdecea;border-radius:7px;padding:8px 12px;font-size:12px;color:#a32d2d;margin-bottom:12px;"></div>
+
+    <div class="modal-footer">
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn" onclick="closeDriveSetup()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDriveClientId()">Save &amp; Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
